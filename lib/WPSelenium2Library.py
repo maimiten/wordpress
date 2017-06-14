@@ -1,11 +1,11 @@
-import Selenium2Library
+from Selenium2Library import Selenium2Library
 import os
 
 class WPSelenium2Library(Selenium2Library):
 
-	def set_privacy(mode='NA',password='123456'):
+	def set_privacy(self, mode='NA',password='123456'):
 		mode = mode.lower()
-		self.click_link(//*[@id="visibility"]/a)
+		self.click_link("//*[@id=\"visibility\"]/a")
 		if mode == 'private':
 			self.select_checkbox(visibility-radio-private)
 		elif mode == 'password':
@@ -13,38 +13,10 @@ class WPSelenium2Library(Selenium2Library):
 			self.input_text(post_password,password)
 		else:
 			self.select_checkbox(visibility-radio-public)
-		self.click_link(//*[@id="post-visibility-select"]/p/a[1])
-		
-	def check_datetime(day,month,year):
-        day = int(day)
-		month = int(month)
-		year = int(year)
-		if month==2:
-			if year%4==0:
-				if 1<=day<=29:
-					return True
-				else:
-					return False
-			else:
-				if 1<=day<=28:
-					return True
-				else:
-					return False
-		elif month in {1,3,5,7,8,10,12}:
-			if 1<=day<=31:
-				return True
-			else:
-				return False
-		elif month in {4,6,9,10}:
-			if 1<=day<=30:
-				return True
-			else:
-				return False
-		else:
-			return False
+		self.click_link("//*[@id=\"post-visibility-select\"]/p/a[1]")
 
-	def publish_time(time):
-		self.click_link(//*[@id="misc-publishing-actions"]/div[3]/a)
+	def publish_time(self, time):
+		self.click_link("//*[@id=\"misc-publishing-actions\"]/div[3]/a")
 		hour = time[0,2]
 		minute = time[2,4]
 		if time[4] == 0:
