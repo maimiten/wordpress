@@ -1,4 +1,5 @@
 import Selenium2Library
+import os
 
 class WPSelenium2Library(Selenium2Library):
 
@@ -78,4 +79,58 @@ class WPSelenium2Library(Selenium2Library):
 		if publish_time != 'NA':
 			publish_time(publish_time)
 		
+	def submit_post(title):
+		self.click_button(publish)
+		self.wait_until_page_contains('Edit Post')
+		self.click_element(//*[@class='wp-menu-name'][text()='Posts'])
+		self.wait_until_page_contains(title)
 		
+#	def click_checknox_post(text):
+#		if text == '':
+#			self.select_checkbox(cb-select-all-1)
+#			return 'ok'
+#		list_element = self.get_webelements(//a[contains(text(),'text')]/../../../th/input)
+
+#	def delete_post(text):
+#		self.click_element(//*[@class='wp-menu-name'][text()='Posts'])
+#		self.wait_until_page_contains(text)
+#		check = click_checknox_post(text)
+#		if check != 'not':
+#			self.select_from_list_by_value(bulk-action-selector-top,'trash')
+#			self.click_button(doaction)
+#			self.wait_until_page_contains('moved to the Trash')
+
+	def check_filesize(file_path):
+		if os.stat(file_path).st_size <= 2**21:
+			return True
+		else:
+			return False
+	
+	def choose_file_upload(path):
+		status = check_filesize(path)
+		if status == True:
+			self.choose_file(//input[starts-with(@id,'html5_')],path)
+			
+	def upload_file(path):
+		file_name = path[(path.find('/')+1):]
+		choose_file_upload(path)
+		self.click_element(//*[@class='wp-menu-name'][text()='Media'])
+		self.wait_until_page_contains(file_name)
+		
+	def upload_folder(path):
+		list_files = self.list_files_in_directory(path)
+		for file in list_files:
+			file_path = path + '/' + file
+			choose_file_upload(file_path)
+			self.wait_until_page_contains(file)
+		self.click_element(//*[@class='wp-menu-name'][text()='Media'])
+		
+	def upload_media(mode,path):
+		self.click_element(//*[@class='wp-menu-name'][text()='Media'])
+		self-wait_until_page_contains('Media Library')
+		self.click_element(//h1[contains(text(),'Media Library')]/a)
+		mode = mode.lower()
+		if mode == 'file':
+			upload_file(path)
+		if mode == 'folder':
+			upload_folder(path)
