@@ -1,3 +1,2 @@
 *** Settings ***
 
-*** Test Cases ***
