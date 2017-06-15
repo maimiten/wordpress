@@ -1,6 +1,5 @@
 import os
 
-
 def read_file(filename):
     try:
         content = open(filename).read()

@@ -1,2 +1,6 @@
 .idea
 .idea/**
+lib/*.pyc
+*.xml
+*.html
+*.png
