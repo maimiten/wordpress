@@ -144,3 +144,14 @@ class WPSelenium2Library(Selenium2Library):
         self.click_button('Insert into post')
         self.submit_post(title)
 
+    def insert_media_from_url(self,url,caption='NA',alt_text='NA'):
+        self.click_button('insert-media-button')
+        self.click_element('//a[text()=\'Insert from URL\']')
+        self.clear_element_text('embed-url-field')
+        self.input_text('embed-url-field',url)
+        if caption != 'NA':
+            self.input_text('//textarea[@data-setting=\'caption\']',caption)
+        if alt_text != 'NA':
+            self.input_text('//input[@data-setting=\'alt\']',alt_text)
+        self.click_button('Insert into post')
+
