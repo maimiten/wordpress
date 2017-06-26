@@ -5,8 +5,11 @@ from robot.api import logger
 
 class WPSelenium2Library(Selenium2Library):
 
-
     def set_privacy(self, mode='NA', password='123456'):
+        '''
+        This keyword set the privacy for the post with the provided *mode* and *password*.
+        Both *mode* and *password* are optional. If *password* is not provided, then default password wiil be used.
+        '''
         mode = mode.lower()
         self.click_link('//*[@id="visibility"]/a')
         if mode == 'private':
@@ -20,6 +23,9 @@ class WPSelenium2Library(Selenium2Library):
 
 
     def publish_time(self, time):
+        '''
+        This keyword will set the _time_ which is provided by user to publish the post.
+        '''
         self.click_link('//*[@id=\"misc-publishing-actions\"]/div[3]/a')
         hour = time[0:2]
         minute = time[2:4]
@@ -44,6 +50,10 @@ class WPSelenium2Library(Selenium2Library):
             self.click_link('//*[@id="timestampdiv"]/p/a[1]')
 
     def create_post(self, title,content,privacy='NA',password='123456',time='NA'):
+        '''
+        This keyword is used to create a new post with the provided _title_ and _content_.
+        _privacy, password_ and _time_ are optional. If these parameter are not provided, the new post is public and will be published after submitting.
+        '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Posts\']')
         self.wait_until_page_contains('Title')
         self.click_link('Add New')
@@ -56,12 +66,18 @@ class WPSelenium2Library(Selenium2Library):
             self.publish_time(time)
 
     def submit_post(self, title):
+        '''
+        This keyword will submit the post that is composed in the <a href="file:///C:/git-course/wordpress/docs/WPSelenium2Library.html#Create%20Post">Create Post</a> keyword
+        '''
         self.click_button('publish')
         self.wait_until_page_contains('Edit Post')
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Posts\']')
         self.wait_until_page_contains(title)
 
     def click_checkbox_post(self, text):
+        '''
+        This keyword selects the post with the _text_ that is provided by user
+        '''
         if text == 'NA':
             self.select_checkbox('cb-select-all-1')
             return 'ok'
@@ -75,6 +91,9 @@ class WPSelenium2Library(Selenium2Library):
             return 'ok'
 
     def delete_post(self,text):
+        '''
+        This keyword deletes the post with the title includes _text_ provided
+        '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Posts\']')
         self.wait_until_page_contains(text)
         check = self.click_checkbox_post(text)
@@ -85,17 +104,26 @@ class WPSelenium2Library(Selenium2Library):
 
 
     def choose_file_upload(self,path):
+        '''
+        This keyword chooses the file or folder with _path_ provided to upload
+        '''
         status = GeneralLibrary.check_filesize(path)
         if status == True:
             self.choose_file('//input[starts-with(@id,\'html5_\')]',path)
 
     def upload_file(self,path):
+        '''
+        This keyword will upload the file that has _path_
+        '''
         file_name = path[(path.rfind('/')+1):]
         self.choose_file_upload(path)
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Media\']')
         self.wait_until_page_contains(file_name)
 
     def upload_folder(self,path):
+        '''
+        This keyword will upload the folder that has _path_
+        '''
         list_files = self.list_files_in_directory(path)
         for file in list_files:
             file_path = path + '/' + file
@@ -104,6 +132,9 @@ class WPSelenium2Library(Selenium2Library):
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Media\']')
 
     def upload_media(self,mode,path):
+        '''
+        This keyword uploads the file or folder that has _path_
+        '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Media\']')
         self.wait_until_page_contains('Media Library')
         self.click_element('//h1[contains(text(),\'Media Library\')]/a')
@@ -114,20 +145,32 @@ class WPSelenium2Library(Selenium2Library):
             self.upload_folder(path)
 
     def create_text_post(self,title,content,privacy='NA',password='123456',time='NA'):
+        '''
+        This keyword will create a text post with _title_ and _content_ provided
+        '''
         self.create_post(title,content,privacy,password,time)
         self.submit_post(title)
 
     def create_video_post(self,title,content,privacy='NA',password='123456',time='NA'):
+        '''
+        This keyword will create a post that includes video with _title_ and _content_ provided
+        '''
         self.create_post(title,content,privacy,password,time)
         self.select_checkbox('post-format-video')
         self.submit_post(title)
 
     def create_post_from_file(self,title,filename,privacy='NA',password='123456',time='NA'):
+        '''
+        This keyword will create a post with _title_ and content is read from the file with _filename_
+        '''
         content = GeneralLibrary.read_file(filename)
         self.create_post(title, content, privacy, password, time)
         self.submit_post(title)
 
     def create_post_and_upload_media(self,title,content,path,privacy='NA',password='123456',time='NA'):
+        '''
+        This keyword create a post with _title_ and _content_. This post also includes media file with _path_ upload from computer
+        '''
         self.create_post(title, content, privacy, password, time)
         self.click_button('insert-media-button')
         self.click_element('//a[text()=\'Upload Files\']')
@@ -136,6 +179,9 @@ class WPSelenium2Library(Selenium2Library):
         self.submit_post(title)
 
     def create_post_and_add_media_from_library(self,title,content,filename,privacy='NA',password='123456',time='NA'):
+        '''
+        This keyword create a post with _title_ and _content_. This post includes media file with _filename_ which is added from wordpress library
+        '''
         self.create_post(title, content, privacy, password, time)
         self.click_button('insert-media-button')
         self.click_element('//a[text()=\'Media Library\']')
@@ -145,6 +191,9 @@ class WPSelenium2Library(Selenium2Library):
         self.submit_post(title)
 
     def insert_media_from_url(self,url,caption='NA',alt_text='NA'):
+        '''
+        This keyword is used to *insert* new _media_ into library from a url.
+        '''
         self.click_button('insert-media-button')
         self.click_element('//a[text()=\'Insert from URL\']')
         self.clear_element_text('embed-url-field')
@@ -154,4 +203,18 @@ class WPSelenium2Library(Selenium2Library):
         if alt_text != 'NA':
             self.input_text('//input[@data-setting=\'alt\']',alt_text)
         self.click_button('Insert into post')
+
+    def add_category(self,name,slug='NA',description='NA'):
+        '''
+        This keyword addes new category
+        '''
+        self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Posts\']')
+        self.wait_until_page_contains('Title')
+        self.click_link('Categories')
+        self.input_text('tag-name',name)
+        if slug != 'NA':
+            self.input_text('tag-slug',slug)
+        if description != 'NA':
+            self.input_text('tag-description',description)
+        self.click_button('submit')
 
