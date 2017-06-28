@@ -6,6 +6,9 @@ Resource  Keywords.robot
 Suite Setup  Begin Web Case
 Suite Teardown  End Web Case
 
+*** Variables ***
+@{DATALIST1}  username  email  firstname  lastname
+@{DATALIST2}  username  email  password  website
 
 *** Test Cases ***
 
@@ -23,3 +26,9 @@ Upload New Media
     Log In
     Upload media  file  C:/git-course/wordpress/data/Desert.jpg
     Upload media  folder  C:/git-course/wordpress/data/flower
+
+Add New User
+    [Tags]  3
+    Log In
+    Add User  datalist=@{DATALIST1}  noti=no  role=edit
+    Add User  datalist=@{DATALIST2}  role=au

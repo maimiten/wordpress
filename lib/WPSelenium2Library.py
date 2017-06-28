@@ -1,5 +1,6 @@
 from Selenium2Library import Selenium2Library
 import GeneralLibrary
+from faker import Faker
 from robot.api import logger
 
 
@@ -217,4 +218,82 @@ class WPSelenium2Library(Selenium2Library):
         if description != 'NA':
             self.input_text('tag-description',description)
         self.click_button('submit')
+
+    def generate_password(self,password):
+        self.click_button('Show password')
+        self.clear_element_text('pass1-text')
+        self.input_text('pass1-text',password)
+        if self.get_text('pass-strength-result') in {'Very weak','Weak'}:
+            self.select_checkbox('pw_weak')
+
+    def submit_user(self,username):
+        self.click_button('createusersub')
+        self.wait_until_page_contains(username)
+
+    def fill_data(self,userdata):
+        for key, value in userdata.iteritems():
+            if key == 'username':
+                self.input_text('user_login',value)
+            elif key == 'email':
+                self.input_text('email',value)
+            elif key == 'firstname':
+                self.input_text('first_name',value)
+            elif key == 'lastname':
+                self.input_text('last_name',value)
+            elif key == 'website':
+                self.input_text('url',value)
+            elif key == 'role':
+                if value == 'admin':
+                    self.select_from_list_by_value('role', 'administrator')
+                elif value == 'edit':
+                    self.select_from_list_by_value('role', 'editor')
+                elif value == 'ctrb':
+                    self.select_from_list_by_value('role', 'contributor')
+                elif value == 'au':
+                    self.select_from_list_by_value('role', 'author')
+                else:
+                    self.select_from_list_by_value('role', 'subscriber')
+
+
+    def generate_userdata(self,datalist,role):
+        fake = Faker()
+        fakeProfile = fake.profile()
+        userdata = {'role':'sub'}
+        for i in datalist:
+            if i == 'username':
+                userdata['username'] = fakeProfile['username']
+            elif i == 'email':
+                userdata['email'] = fakeProfile['mail']
+            elif i == 'firstname':
+                userdata['firstname'] = fakeProfile['name'].split()[0]
+            elif i == 'lastname':
+                userdata['lastname'] = fakeProfile['name'].split()[1]
+            elif i == 'password':
+                fakepass = fake.password()
+                userdata['password'] = fakepass
+            elif i == 'website':
+                userdata['website'] = fakeProfile['website'][0]
+        if role != 'sub':
+            userdata['role'] = role
+        return userdata
+
+    def add_user(self,datalist,noti='yes',role='sub'):
+        self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
+        self.wait_until_page_contains('Users')
+        self.click_element('//*[@id="menu-users"]//a[text()=\'Add New\']')
+        self.wait_until_page_contains('Add New User')
+        userdata = self.generate_userdata(datalist,role)
+        if 'username' and 'email' in userdata:
+            self.fill_data(userdata)
+        if 'password' in userdata:
+            self.generate_password(userdata['password'])
+        if noti == 'no':
+            self.select_checkbox('send_user_notification')
+        self.submit_user(userdata['username'])
+
+
+
+
+
+
 
