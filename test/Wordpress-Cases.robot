@@ -9,6 +9,7 @@ Suite Teardown  End Web Case
 *** Variables ***
 @{DATALIST1}  username  email  firstname  lastname
 @{DATALIST2}  username  email  password  website
+@{USERLIST}  tthomas  harveyjenna  uhall
 
 *** Test Cases ***
 
@@ -32,3 +33,15 @@ Add New User
     Log In
     Add User  datalist=@{DATALIST1}  noti=no  role=edit
     Add User  datalist=@{DATALIST2}  role=au
+    Add User  datalist=@{DATALIST1}  noti=no
+    Add User  datalist=@{DATALIST2}  role=ctrb
+
+Delete User
+    [Tags]  4
+    Log In
+    Delete User  userlist=@{USERLIST}
+
+Change User Role
+    [Tags]  5
+    Log In
+    Change Role  userlist=@{USERLIST}  role=Editor

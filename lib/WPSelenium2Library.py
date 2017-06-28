@@ -288,9 +288,37 @@ class WPSelenium2Library(Selenium2Library):
         if 'password' in userdata:
             self.generate_password(userdata['password'])
         if noti == 'no':
-            self.select_checkbox('send_user_notification')
+            self.unselect_checkbox('send_user_notification')
         self.submit_user(userdata['username'])
 
+    def click_checkbox_user(self,username):
+        locator = '//a[text()=\'' + username + '\']/../../../th/input'''
+        self.select_checkbox(locator)
+
+    def delete_user(self,userlist):
+        self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
+        self.wait_until_page_contains('Users')
+        for i in userlist:
+            self.click_checkbox_user(i)
+        self.select_from_list_by_value('bulk-action-selector-top','delete')
+        self.click_button('doaction')
+        self.wait_until_page_contains('Delete Users')
+        self.click_button('submit')
+        self.wait_until_page_contains('deleted')
+
+    def change_role(self,userlist,role):
+        self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
+        self.wait_until_page_contains('Users')
+        for i in userlist:
+            self.click_checkbox_user(i)
+        self.select_from_list_by_value('new_role',role.lower())
+        self.click_button('changeit')
+        self.wait_until_page_contains('Changed roles')
+
+    def edit_user(self,username):
+        self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
+        self.wait_until_page_contains('Users')
+        self.click_link(username)
 
 
 
