@@ -1,4 +1,5 @@
 from Selenium2Library import Selenium2Library
+from robot.libraries import BuiltIn
 import GeneralLibrary
 from faker import Faker
 from robot.api import logger
@@ -304,26 +305,29 @@ class WPSelenium2Library(Selenium2Library):
         logger.console(userdata)
         return userdata
 
-    def click_checkbox_user(self,username):
-        locator = '//a[text()=\'' + username + '\']/../../../th/input'''
-        self.select_checkbox(locator)
-
-    def delete_user(self,userlist):
+    def delete_user(self,username):
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
         self.wait_until_page_contains('Users')
-        for i in userlist:
-            self.click_checkbox_user(i)
+        self.input_text('user-search-input',username)
+        self.click_button('search-submit')
+        locator = '//a[text()=\'' + username + '\']/../../../th/input'''
+        self.wait_until_page_contains_element(locator)
+        self.select_checkbox(locator)
         self.select_from_list_by_value('bulk-action-selector-top','delete')
         self.click_button('doaction')
         self.wait_until_page_contains('Delete Users')
+        check = BuiltIn._RunKeyword().run_keyword_and_ignore_error('page should contain element','delete_option0')
+        if check[0] == 'PASS':
+            self.click_element('delete_option0')
         self.click_button('submit')
         self.wait_until_page_contains('deleted')
 
-    def change_role(self,userlist,role):
+    def change_role(self,username,role):
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
         self.wait_until_page_contains('Users')
-        for i in userlist:
-            self.click_checkbox_user(i)
+        locator = '//a[text()=\'' + username + '\']/../../../th/input'''
+        self.wait_until_page_contains_element(locator)
+        self.select_checkbox(locator)
         self.select_from_list_by_value('new_role',role.lower())
         self.click_button('changeit')
         self.wait_until_page_contains('Changed roles')
@@ -393,6 +397,9 @@ class WPSelenium2Library(Selenium2Library):
             elif key == 'sessions':
                 if value == 'destroy':
                     self.click_button('destroy-sessions')
+            logger.console(userdata)
+            self.click_button('submit')
+            self.wait_until_page_contains('Profile updated')
             return userdata
 
 
