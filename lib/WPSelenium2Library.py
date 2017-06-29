@@ -220,7 +220,6 @@ class WPSelenium2Library(Selenium2Library):
         self.click_button('submit')
 
     def generate_password(self,password):
-        self.click_button('Show password')
         self.clear_element_text('pass1-text')
         self.input_text('pass1-text',password)
         if self.get_text('pass-strength-result') in {'Very weak','Weak'}:
@@ -254,20 +253,23 @@ class WPSelenium2Library(Selenium2Library):
                 else:
                     self.select_from_list_by_value('role', 'subscriber')
 
-
     def generate_userdata(self,datalist,role):
         fake = Faker()
         fakeProfile = fake.profile()
         userdata = {'role':'sub'}
+        userdata['display'] = []
         for i in datalist:
             if i == 'username':
                 userdata['username'] = fakeProfile['username']
+                userdata['display'].append(userdata['username'])
             elif i == 'email':
                 userdata['email'] = fakeProfile['mail']
             elif i == 'firstname':
                 userdata['firstname'] = fakeProfile['name'].split()[0]
+                userdata['display'].append(userdata['firstname'])
             elif i == 'lastname':
                 userdata['lastname'] = fakeProfile['name'].split()[1]
+                userdata['display'].append(userdata['lastname'])
             elif i == 'password':
                 fakepass = fake.password()
                 userdata['password'] = fakepass
@@ -275,6 +277,11 @@ class WPSelenium2Library(Selenium2Library):
                 userdata['website'] = fakeProfile['website'][0]
         if role != 'sub':
             userdata['role'] = role
+        if 'firstname' and 'lastname' in datalist:
+            fullname1 = userdata['firstname'] + ' ' + userdata['lastname']
+            fullname2 = userdata['lastname'] + ' ' + userdata['firstname']
+            userdata['display'].append(fullname1)
+            userdata['display'].append(fullname2)
         return userdata
 
     def add_user(self,datalist,noti='yes',role='sub'):
@@ -286,10 +293,16 @@ class WPSelenium2Library(Selenium2Library):
         if 'username' and 'email' in userdata:
             self.fill_data(userdata)
         if 'password' in userdata:
+            self.click_button('Show password')
             self.generate_password(userdata['password'])
+        else:
+            self.click_button('Show password')
+            userdata['password'] = self.get_value('pass1-text')
         if noti == 'no':
             self.unselect_checkbox('send_user_notification')
         self.submit_user(userdata['username'])
+        logger.console(userdata)
+        return userdata
 
     def click_checkbox_user(self,username):
         locator = '//a[text()=\'' + username + '\']/../../../th/input'''
@@ -315,10 +328,73 @@ class WPSelenium2Library(Selenium2Library):
         self.click_button('changeit')
         self.wait_until_page_contains('Changed roles')
 
-    def edit_user(self,username):
-        self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
-        self.wait_until_page_contains('Users')
-        self.click_link(username)
+    def choose_display_name(self,userdata,display):
+        if display == 'firstname':
+            self.select_from_list('display_name',userdata['firstname'])
+        elif display == 'lastname':
+            self.select_from_list('display_name',userdata['lastname'])
+        elif display == 'fullname1':
+            fullname1 = userdata['firstname'] + userdata['lastname']
+            self.select_from_list('display_name',fullname1)
+        elif display == 'fullname2':
+            fullname2 = userdata['lastname'] + userdata['firstname']
+            self.select_from_list('display_name',fullname2)
+        else:
+            self.select_from_list('display_name',userdata['username'])
+
+    def edit_user(self,userdata,data_change):
+        self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Profile\']')
+        self.wait_until_page_contains(userdata['username'])
+        for key, value in data_change.iteritems():
+            if key == 'visual editor':
+                if value == 'yes':
+                    self.select_checkbox('rich_editing')
+            elif key == 'color':
+                if value.lower() in ['light','blue','coffee','ectoplasm','midnight','ocean','sunrise']:
+                    locator = 'admin_color_' + value.lower()
+                else:
+                    locator = 'admin_color_fresh'
+                self.click_element(locator)
+            elif key == 'shorcut':
+                if value == 'yes':
+                    self.select_checkbox('comment_shortcuts')
+            elif key == 'toolbar':
+                if value == 'no':
+                    self.unselect_checkbox('admin_bar_front')
+            elif key == 'firstname':
+                self.clear_element_text('first_name')
+                self.input_text('first_name',value)
+                userdata['firstname'] = value
+            elif key == 'lastname':
+                self.clear_element_text('last_name')
+                self.input_text('last_name',value)
+                userdata['lastname'] = value
+            elif key == 'nickname':
+                self.clear_element_text('nickname')
+                self.input_text('nickname',value)
+                userdata['nickname'] = value
+            elif key == 'display':
+                self.choose_display_name(data_change,value)
+            elif key == 'email':
+                self.clear_element_text('email')
+                self.input_text('email',value)
+                userdata['email'] = value
+            elif key == 'website':
+                self.clear_element_text('url')
+                self.input_text('url',value)
+                userdata['url'] = value
+            elif key == 'info':
+                self.clear_element_text('description')
+                self.input_text('description',value)
+                userdata['info'] = value
+            elif key == 'password':
+                self.generate_password(value)
+                userdata['password'] = value
+            elif key == 'sessions':
+                if value == 'destroy':
+                    self.click_button('destroy-sessions')
+            return userdata
+
 
 
 

@@ -11,6 +11,7 @@ Suite Teardown  End Web Case
 @{DATALIST2}  username  email  password  website
 @{USERLIST}  tthomas  harveyjenna  uhall
 
+
 *** Test Cases ***
 
 Create New Post
@@ -32,9 +33,6 @@ Add New User
     [Tags]  3
     Log In
     Add User  datalist=@{DATALIST1}  noti=no  role=edit
-    Add User  datalist=@{DATALIST2}  role=au
-    Add User  datalist=@{DATALIST1}  noti=no
-    Add User  datalist=@{DATALIST2}  role=ctrb
 
 Delete User
     [Tags]  4
@@ -45,3 +43,15 @@ Change User Role
     [Tags]  5
     Log In
     Change Role  userlist=@{USERLIST}  role=Editor
+
+User Flow
+    [Tags]  6
+    Log In  ${USER_NAME}  ${USER_PASSWORD}
+    &{USERDATA} =  Add User  datalist=@{DATALIST1}  role=ctrb
+    Log Out
+    Log In  &{USERDATA}[username]  &{USERDATA}[password]
+
+
+
+
+
