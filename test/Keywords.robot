@@ -12,8 +12,8 @@ End Web Case
     close browser
 
 Log In
-    [Arguments]  ${username}  ${password}
-    go to  ${LOG_IN_PAGE}
+    [Arguments]  ${username}  ${password}  ${url}=${LOG_IN_PAGE}
+    go to  ${url}
     wait until element is enabled  wp-submit
     sleep  3
     input text  user_login  ${username}

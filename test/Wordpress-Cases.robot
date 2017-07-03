@@ -13,14 +13,14 @@ Suite Teardown  End Web Case
 
 *** Test Cases ***
 
+KemKool web
+    [Tags]  kk
+    Log In  ${KK_USERNAME}  ${KK_PASSWORD}  ${KK_URL}
+    Create Video Post  ${KK_TITLE}  ${KK_CONTENT}  time=${TIME}
+
 Create New Post
     [Tags]  1
     Log In  ${USER_NAME}  ${USER_PASSWORD}
-#    Create Text Post  First Post  This a test
-#    Create Text Post  Private post  Only me can see this  privacy=private
-#    Create Video Post  Helsinki Air Show 2017  https://www.youtube.com/watch?v=RaaSHDbdJPk
-#    Create Video Post  Kem's Samba dance  https://www.youtube.com/watch?v=gfT4Sk-4QMk  privacy=password
-    Create post from file  Short blog  C:/git-course/wordpress/data/content.txt  time=220515062017
 
 Upload New Media
     [Tags]  2
