@@ -36,12 +36,12 @@ Add New User
 Delete User
     [Tags]  4
     Log In  ${USER_NAME}  ${USER_PASSWORD}
-    Delete User  userlist=@{USERLIST}
+    Delete User  bmontoya
 
 Change User Role
-    [Tags]  5
+    [Tags]  4
     Log In  ${USER_NAME}  ${USER_PASSWORD}
-    Change Role  userlist=@{USERLIST}  role=Editor
+    Change Role  hendersonscott  Editor
 
 User Flow
     [Tags]  6

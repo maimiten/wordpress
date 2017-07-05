@@ -325,6 +325,8 @@ class WPSelenium2Library(Selenium2Library):
     def change_role(self,username,role):
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
         self.wait_until_page_contains('Users')
+        self.input_text('user-search-input', username)
+        self.click_button('search-submit')
         locator = '//a[text()=\'' + username + '\']/../../../th/input'''
         self.wait_until_page_contains_element(locator)
         self.select_checkbox(locator)
