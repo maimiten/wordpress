@@ -36,7 +36,7 @@ Add New User
 Delete User
     [Tags]  4
     Log In  ${USER_NAME}  ${USER_PASSWORD}
-    Delete User  matthew19
+    Delete User  hendersonscott
 
 Change User Role
     [Tags]  5
