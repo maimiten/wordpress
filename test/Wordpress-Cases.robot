@@ -36,10 +36,10 @@ Add New User
 Delete User
     [Tags]  4
     Log In  ${USER_NAME}  ${USER_PASSWORD}
-    Delete User  bmontoya
+    Delete User  matthew19
 
 Change User Role
-    [Tags]  4
+    [Tags]  5
     Log In  ${USER_NAME}  ${USER_PASSWORD}
     Change Role  hendersonscott  Editor
 
