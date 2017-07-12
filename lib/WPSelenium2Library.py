@@ -208,7 +208,7 @@ class WPSelenium2Library(Selenium2Library):
 
     def add_category(self,name,slug='NA',description='NA'):
         '''
-        This keyword addes new category
+        This keyword adds new category
         '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Posts\']')
         self.wait_until_page_contains('Title')
@@ -221,16 +221,25 @@ class WPSelenium2Library(Selenium2Library):
         self.click_button('submit')
 
     def generate_password(self,password):
+        '''
+        This keyword will set the _password_ that is imported by user. It also checks the password strength warning
+        '''
         self.clear_element_text('pass1-text')
         self.input_text('pass1-text',password)
         if self.get_text('pass-strength-result') in {'Very weak','Weak'}:
             self.select_checkbox('pw_weak')
 
     def submit_user(self,username):
+        '''
+        This keyword will submit the new created user that is recognized by _username_ parameter
+        '''
         self.click_button('createusersub')
         self.wait_until_page_contains(username)
 
     def fill_data(self,userdata):
+        '''
+        This keyword will set all the user's data which is imported from _userdata_
+        '''
         for key, value in userdata.iteritems():
             if key == 'username':
                 self.input_text('user_login',value)
@@ -255,6 +264,9 @@ class WPSelenium2Library(Selenium2Library):
                     self.select_from_list_by_value('role', 'subscriber')
 
     def generate_userdata(self,datalist,role):
+        '''
+        This keyword generate all the user's data which is required from _datalist_. It returns a dictionary that includes the user's profile information.
+        '''
         fake = Faker()
         fakeProfile = fake.profile()
         userdata = {'role':'sub'}
@@ -286,6 +298,11 @@ class WPSelenium2Library(Selenium2Library):
         return userdata
 
     def add_user(self,datalist,noti='yes',role='sub'):
+        '''
+        This keyword will add new user.
+        It includes three parameters in which _datalist_ is the information required, _noti_ to check if the user want to send notification and _role_ is the role of the user which is seted by admin.
+        This keyword returns an userdata that includes the profile of the user.
+        '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
         self.wait_until_page_contains('Users')
         self.click_element('//*[@id="menu-users"]//a[text()=\'Add New\']')
@@ -306,6 +323,9 @@ class WPSelenium2Library(Selenium2Library):
         return userdata
 
     def delete_user(self,username):
+        '''
+        This keyword will delete the user with the _username_.
+        '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
         self.wait_until_page_contains('Users')
         self.input_text('user-search-input',username)
@@ -323,6 +343,9 @@ class WPSelenium2Library(Selenium2Library):
         self.wait_until_page_contains('deleted')
 
     def change_role(self,username,role):
+        '''
+        This keyword changes the role of the user with the imported _username_ and _role_.
+        '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Users\']')
         self.wait_until_page_contains('Users')
         self.input_text('user-search-input', username)
@@ -335,6 +358,9 @@ class WPSelenium2Library(Selenium2Library):
         self.wait_until_page_contains('Changed roles')
 
     def choose_display_name(self,userdata,display):
+        '''
+        This keyword sets the display name the username with the _userdata_ and the _display_ option.
+        '''
         if display == 'firstname':
             self.select_from_list('display_name',userdata['firstname'])
         elif display == 'lastname':
@@ -349,6 +375,10 @@ class WPSelenium2Library(Selenium2Library):
             self.select_from_list('display_name',userdata['username'])
 
     def edit_user(self,userdata,data_change):
+        '''
+        This keyword edits the user's information that has _userdata_. The information need to be change is listed in _data_change_.
+        It will returns the new userdata.
+        '''
         self.click_element('//*[@class=\'wp-menu-name\'][text()=\'Profile\']')
         self.wait_until_page_contains(userdata['username'])
         for key, value in data_change.iteritems():
