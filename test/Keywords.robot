@@ -14,11 +14,11 @@ End Web Case
 Log In
     [Arguments]  ${username}  ${password}  ${url}=${LOG_IN_PAGE}
     go to  ${url}
-    wait until element is enabled  wp-submit  10
+    wait until element is enabled  //*[@type="submit"]
     sleep  3
-    input text  user_login  ${username}
-    input text  user_pass  ${password}
-    click button  wp-submit
+    input text  //*[@type="text"]  ${username}
+    input text  //*[@type="password"]  ${password}
+    click button  //*[@type="submit"]
 
 Log Out
     mouse over  //*[@id="wp-admin-bar-my-account"]/a/span
